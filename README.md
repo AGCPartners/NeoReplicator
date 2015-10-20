@@ -1,7 +1,7 @@
 # NeoReplicator
 A MySQL to Neo4J replicator based on binlog listener running on Node.js.
 
-NeoReplicator is a further development of ['Zong Ji'](https://github.com/nevill/zongji) library
+NeoReplicator is a further development of 
 
 This package has been tested with MySQL server 5.5.40 and 5.6.19. All MySQL server versions >= 5.1.15 are supported.
 It is briefly tested with MariaDB 10.0
@@ -9,18 +9,15 @@ It is briefly tested with MariaDB 10.0
 ## Quick Start
 
 ```javascript
-var neorep = new NeoReplicator({ /* ... MySQL Connection Settings ... */ });
-// Neo4J connection
-var db = new neo4j('neo4j:nenad@127.0.0.1:7474');
-
-// Each change to the replication log results in an event
-neorep.on('binlog', function(evt) {
-  evt.replicate(db, config);
+var neorep = new NeoReplicator({
+  mysql: { port: 3306, host: localhost, user: root, password: root },
+  neo4j: { port: 7474, host: localhost, user: neo4j, password: neo4j },
+  mapping: { /* see in example.js */ }
 });
 
 // Binlog must be started, optionally pass in filters
-neorep.start({
-  includeEvents: ['tablemap', 'writerows', 'updaterows', 'deleterows']
+neorep.start(
+  includeSchema: { 'mysqlDatabaseName': true }
 });
 ```
 
@@ -31,7 +28,7 @@ For a complete implementation see [`example.js`](example.js)...
 * Requires Node.js v0.10+
 
   ```bash
-  $ npm install neorep
+  $ npm install neoReplicator
   ```
 
 * Enable MySQL binlog in `my.cnf`, restart MySQL server after making the changes.
@@ -53,81 +50,13 @@ For a complete implementation see [`example.js`](example.js)...
   GRANT REPLICATION SLAVE, REPLICATION CLIENT ON *.* TO 'neorep'@'localhost'
   ```
 
-## NeoReplicator Class
-
-The `NeoReplicator` constructor accepts one argument: an object containg MySQL connection details in the same format as used by `node-mysql`.
-
-Each instance includes the following methods:
-
-Method Name | Arguments | Description
-------------|-----------|------------------------
-`start`     | `options` | Start receiving replication events
-`stop`      | *None*    | Disconnect from MySQL server, stop receiving events
-`set`       | `options` | Change options after `start()`
-`on`        | `eventName`, `handler` | Add a listener to the `binlog` or `error` event. Each handler function accepts one argument.
-
-**Options available:**
-
-Option Name | Type | Description
-------------|------|-------------------------------
-`serverId`  | `integer` | [Unique number (1 - 2<sup>32</sup>)](http://dev.mysql.com/doc/refman/5.0/en/replication-options.html#option_mysqld_server-id) to identify this replication slave instance. Must be specified if running more than one instance of NeoReplicator. Must be used in `start()` method for effect.<br>**Default:** `1`
-`startAtEnd` | `boolean` | Pass `true` to only emit binlog events that occur after NeoReplicator's instantiation. Must be used in `start()` method for effect.<br>**Default:** `false`
-`includeEvents` | `[string]` | Array of event names to include<br>**Example:** `['writerows', 'updaterows', 'deleterows']`
-`excludeEvents` | `[string]` | Array of event names to exclude<br>**Example:** `['rotate', 'tablemap']`
-`includeSchema` | `object` | Object describing which databases and tables to include (Only for row events). Use database names as the key and pass an array of table names or `true` (for the entire database).<br>**Example:** ```{ 'my_database': ['allow_table', 'another_table'], 'another_db': true }```
-`excludeSchema` | `object` | Object describing which databases and tables to exclude (Same format as `includeSchema`)<br>**Example:** ```{ 'other_db': ['disallowed_table'], 'ex_db': true }```
-
-* By default, all events and schema are emitted.
-* `excludeSchema` and `excludeEvents` take precedence over `includeSchema` and `includeEvents`, respectively.
-
-**Supported Events:**
-
-Event name  | Description
-------------|---------------
-`unknown`   | Catch any other events
-`query`     | [Insert/Update/Delete Query](http://dev.mysql.com/doc/internals/en/query-event.html)
-`rotate`    | [New Binlog file](http://dev.mysql.com/doc/internals/en/rotate-event.html) (not required to be included to rotate to new files)
-`format`    | [Format Description](http://dev.mysql.com/doc/internals/en/format-description-event.html)
-`xid`       | [Transaction ID](http://dev.mysql.com/doc/internals/en/xid-event.html)
-`tablemap`  | Before any row event (must be included for any other row events)
-`writerows` | Rows inserted
-`updaterows` | Rows changed
-`deleterows` | Rows deleted
-
-**Event Methods**
-
-Neither method requires any arguments.
-
-Name   | Description
--------|---------------------------
-`dump` | Log a description of the event to the console
-`getEventName` | Return the name of the event
-
-## Important Notes
-
-* :star2: [All types allowed by `node-mysql`](https://github.com/felixge/node-mysql#type-casting) are supported by this package.
-* :speak_no_evil: While 64-bit integers in MySQL (`BIGINT` type) allow values in the range of 2<sup>64</sup> (± ½ × 2<sup>64</sup> for signed values), Javascript's internal storage of numbers limits values to 2<sup>53</sup>, making the allowed range of `BIGINT` fields only `-9007199254740992` to `9007199254740992`. Unsigned 64-bit integers must also not exceed `9007199254740992`.
-* :point_right: `TRUNCATE` statement does not cause corresponding `DeleteRows` event. Use unqualified `DELETE FROM` for same effect.
-* When using fractional seconds with `DATETIME` and `TIMESTAMP` data types in MySQL > 5.6.4, only millisecond precision is available due to the limit of Javascript's `Date` object.
-
-## Run Tests
-
-* Configure MySQL in `test/settings/mysql.js`
-* Run `npm test`
-
 ## Reference
 
-I learnt many things from following resources while making NeoReplicator.
+This package is a further development of ['Zong Ji'](https://github.com/nevill/zongji) library
+The main dependencies are:
 
 * https://github.com/felixge/node-mysql
-* https://github.com/felixge/faster-than-c/
-* http://intuitive-search.blogspot.co.uk/2011/07/binary-log-api-and-replication-listener.html
-* https://github.com/Sannis/node-mysql-libmysqlclient
-* https://kkaefer.com/node-cpp-modules/
-* http://dev.mysql.com/doc/internals/en/replication-protocol.html
-* http://www.cs.wichita.edu/~chang/lecture/cs742/program/how-mysql-c-api.html
-* https://github.com/jeremycole/mysql_binlog (Ruby implemenation of MySQL binlog parser)
-* http://dev.mysql.com/doc/internals/en/date-and-time-data-type-representation.html
+* https://github.com/philippkueng/node-neo4j
 
 ## License
 MIT

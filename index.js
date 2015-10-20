@@ -4,22 +4,22 @@ var util = require('util');
 var EventEmitter = require('events').EventEmitter;
 var generateBinlog = require('./lib/sequence/binlog');
 
-function NeoReplicator(connSettings, options) {
+function NeoReplicator(settings, options) {
   this.set(options);
 
   EventEmitter.call(this);
 
   // to send table info query
-  var ctrlSettings = cloneObjectSimple(connSettings.mysql);
+  var ctrlSettings = cloneObjectSimple(settings.mysql);
   ctrlSettings.database = 'information_schema';
-  this.ctrlConnection = mysql.createConnection(ctrlSettings);
   this.ctrlConnectionPool  = mysql.createPool(ctrlSettings);
+  this.mapping = settings.mapping;
   //this.ctrlConnection.connect();
   this.ctrlCallbacks = [];
-  var neoSettings = connSettings.neo4j;
+  var neoSettings = settings.neo4j;
   this.neo4jDb = new neo4j(neoSettings.user+':'+neoSettings.password+'@'+neoSettings.host+':'+neoSettings.port);
 
-  this.connection = mysql.createConnection(connSettings.mysql);
+  this.connection = mysql.createConnection(settings.mysql);
 
   this.tableMap = {};
   this.ready = false;
@@ -45,6 +45,11 @@ NeoReplicator.prototype._init = function() {
   var binlogOptions = {
     tableMap: self.tableMap,
   };
+
+
+  self.on('binlog', function(evt) {
+    evt.replicate(self.mapping);
+  });
 
   var asyncMethods = [
     {
@@ -229,8 +234,8 @@ NeoReplicator.prototype.stop = function(){
 };
 
 NeoReplicator.prototype._skipEvent = function(eventName){
-  var include = this.options.includeEvents;
-  var exclude = this.options.excludeEvents;
+  var include = ['tablemap', 'writerows', 'updaterows', 'deleterows'];
+  var exclude = [];
   return !(
    (include === undefined ||
     (include instanceof Array && include.indexOf(eventName) !== -1)) &&
