@@ -104,6 +104,7 @@ NeoReplicator.prototype._isChecksumEnabled = function(next) {
 
   this.ctrlConnectionPool.getConnection(function(err, ctrlConnection) {
     ctrlConnection.query(sql, function(err, rows) {
+      ctrlConnection.release();
       if (err) {
         if(err.toString().match(/ER_UNKNOWN_SYSTEM_VARIABLE/)){
           // MySQL < 5.6.2 does not support @@GLOBAL.binlog_checksum
@@ -128,8 +129,6 @@ NeoReplicator.prototype._isChecksumEnabled = function(next) {
       } else {
         next(checksumEnabled);
       }
-
-      ctrlConnection.release();
     });
   });
 };
@@ -138,9 +137,9 @@ NeoReplicator.prototype._findBinlogEnd = function(next) {
   var self = this;
   this.ctrlConnectionPool.getConnection(function(err, ctrlConnection) {
     ctrlConnection.query('SHOW BINARY LOGS', function(err, rows) {
+      ctrlConnection.release();
       if(err) throw err;
       next(rows.length > 0 ? rows[rows.length - 1] : null);
-      ctrlConnection.release();
     });
   });
 };
@@ -165,6 +164,7 @@ NeoReplicator.prototype._fetchTableInfo = function(tableMapEvent, next) {
 
   this.ctrlConnectionPool.getConnection(function(err, ctrlConnection) {
     ctrlConnection.query(sql, function(err, rows) {
+      ctrlConnection.release();
       if (err) throw err;
 
       self.tableMap[tableMapEvent.tableId] = {

@@ -5,12 +5,14 @@ var mapping = {
   Users: {
     type: 'node',
     name: 'User',
+    primaryKey: 'id',
     properties: ['firstName','lastName','email'],
     relations: {}
   },
   Companies: {
     type: 'node',
     name: 'Company',
+    primaryKey: 'id',
     properties: ['name','state','city'],
     relations: {
       country: 'IS_IN'
@@ -19,11 +21,13 @@ var mapping = {
   Countries: {
     type: 'node',
     name: 'Country',
+    primaryKey: 'id',
     properties: ['name','shortName']
   },
   UserCompanies: {
     type: 'relation',
     name: 'WORKS_FOR',
+    primaryKey: 'id',
     startNode: 'userId',
     endNode: 'companyId',
     properties: ['department']
