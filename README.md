@@ -1,12 +1,12 @@
 # NeoReplicator
 A MySQL to Neo4J replicator based on binlog listener running on Node.js.
 
-###Goals
+### Goals
 
 The package is still in development and some heavy change can occur.
 The final goal is to have an app that will more or less instantaneously replicate the changes made in MySQL database to a Neo4J graph database.
 
-###TODO list
+### TODO list
 
 create nodes from insert queries ✓
 create relations based on foreign keys ✓
