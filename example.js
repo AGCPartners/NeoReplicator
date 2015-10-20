@@ -1,7 +1,7 @@
 // Client code
-var NeoRep = require('./');
+var NeoReplicator = require('./');
 
-var neorep = new NeoRep({
+var neorep = new NeoReplicator({
   host     : 'localhost',
   user     : 'neorep',
   password : 'neorep',

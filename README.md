@@ -1,7 +1,7 @@
-# NeoRep
+# NeoReplicator
 A MySQL to Neo4J replicator based on binlog listener running on Node.js.
 
-NeoRep is a further development of ['Zong Ji'](https://github.com/nevill/zongji) library
+NeoReplicator is a further development of ['Zong Ji'](https://github.com/nevill/zongji) library
 
 This package has been tested with MySQL server 5.5.40 and 5.6.19. All MySQL server versions >= 5.1.15 are supported.
 It is briefly tested with MariaDB 10.0
@@ -9,7 +9,7 @@ It is briefly tested with MariaDB 10.0
 ## Quick Start
 
 ```javascript
-var neorep = new NeoRep({ /* ... MySQL Connection Settings ... */ });
+var neorep = new NeoReplicator({ /* ... MySQL Connection Settings ... */ });
 // Neo4J connection
 var db = new neo4j('neo4j:nenad@127.0.0.1:7474');
 
@@ -53,9 +53,9 @@ For a complete implementation see [`example.js`](example.js)...
   GRANT REPLICATION SLAVE, REPLICATION CLIENT ON *.* TO 'neorep'@'localhost'
   ```
 
-## NeoRep Class
+## NeoReplicator Class
 
-The `NeoRep` constructor accepts one argument: an object containg MySQL connection details in the same format as used by `node-mysql`.
+The `NeoReplicator` constructor accepts one argument: an object containg MySQL connection details in the same format as used by `node-mysql`.
 
 Each instance includes the following methods:
 
@@ -70,8 +70,8 @@ Method Name | Arguments | Description
 
 Option Name | Type | Description
 ------------|------|-------------------------------
-`serverId`  | `integer` | [Unique number (1 - 2<sup>32</sup>)](http://dev.mysql.com/doc/refman/5.0/en/replication-options.html#option_mysqld_server-id) to identify this replication slave instance. Must be specified if running more than one instance of NeoRep. Must be used in `start()` method for effect.<br>**Default:** `1`
-`startAtEnd` | `boolean` | Pass `true` to only emit binlog events that occur after NeoRep's instantiation. Must be used in `start()` method for effect.<br>**Default:** `false`
+`serverId`  | `integer` | [Unique number (1 - 2<sup>32</sup>)](http://dev.mysql.com/doc/refman/5.0/en/replication-options.html#option_mysqld_server-id) to identify this replication slave instance. Must be specified if running more than one instance of NeoReplicator. Must be used in `start()` method for effect.<br>**Default:** `1`
+`startAtEnd` | `boolean` | Pass `true` to only emit binlog events that occur after NeoReplicator's instantiation. Must be used in `start()` method for effect.<br>**Default:** `false`
 `includeEvents` | `[string]` | Array of event names to include<br>**Example:** `['writerows', 'updaterows', 'deleterows']`
 `excludeEvents` | `[string]` | Array of event names to exclude<br>**Example:** `['rotate', 'tablemap']`
 `includeSchema` | `object` | Object describing which databases and tables to include (Only for row events). Use database names as the key and pass an array of table names or `true` (for the entire database).<br>**Example:** ```{ 'my_database': ['allow_table', 'another_table'], 'another_db': true }```
@@ -117,7 +117,7 @@ Name   | Description
 
 ## Reference
 
-I learnt many things from following resources while making NeoRep.
+I learnt many things from following resources while making NeoReplicator.
 
 * https://github.com/felixge/node-mysql
 * https://github.com/felixge/faster-than-c/

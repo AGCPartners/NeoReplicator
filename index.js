@@ -4,7 +4,7 @@ var util = require('util');
 var EventEmitter = require('events').EventEmitter;
 var generateBinlog = require('./lib/sequence/binlog');
 
-function NeoRep(connSettings, options) {
+function NeoReplicator(connSettings, options) {
   this.set(options);
 
   EventEmitter.call(this);
@@ -38,9 +38,9 @@ var cloneObjectSimple = function(obj){
   return out;
 }
 
-util.inherits(NeoRep, EventEmitter);
+util.inherits(NeoReplicator, EventEmitter);
 
-NeoRep.prototype._init = function() {
+NeoReplicator.prototype._init = function() {
   var self = this;
   var binlogOptions = {
     tableMap: self.tableMap,
@@ -92,7 +92,7 @@ NeoRep.prototype._init = function() {
   };
 };
 
-NeoRep.prototype._isChecksumEnabled = function(next) {
+NeoReplicator.prototype._isChecksumEnabled = function(next) {
   var sql = 'select @@GLOBAL.binlog_checksum as checksum';
   var ctrlConnection = this.ctrlConnection;
   var connection = this.connection;
@@ -129,7 +129,7 @@ NeoRep.prototype._isChecksumEnabled = function(next) {
   });
 };
 
-NeoRep.prototype._findBinlogEnd = function(next) {
+NeoReplicator.prototype._findBinlogEnd = function(next) {
   var self = this;
   this.ctrlConnectionPool.getConnection(function(err, ctrlConnection) {
     ctrlConnection.query('SHOW BINARY LOGS', function(err, rows) {
@@ -140,7 +140,7 @@ NeoRep.prototype._findBinlogEnd = function(next) {
   });
 };
 
-NeoRep.prototype._executeCtrlCallbacks = function() {
+NeoReplicator.prototype._executeCtrlCallbacks = function() {
   if (this.ctrlCallbacks.length > 0) {
     this.ctrlCallbacks.forEach(function(cb) {
       setImmediate(cb);
@@ -153,7 +153,7 @@ var tableInfoQueryTemplate = 'SELECT ' +
   'COLUMN_COMMENT, COLUMN_TYPE ' +
   'FROM columns ' + 'WHERE table_schema="%s" AND table_name="%s"';
 
-NeoRep.prototype._fetchTableInfo = function(tableMapEvent, next) {
+NeoReplicator.prototype._fetchTableInfo = function(tableMapEvent, next) {
   var self = this;
   var sql = util.format(tableInfoQueryTemplate,
     tableMapEvent.schemaName, tableMapEvent.tableName);
@@ -173,11 +173,11 @@ NeoRep.prototype._fetchTableInfo = function(tableMapEvent, next) {
   });
 };
 
-NeoRep.prototype.set = function(options){
+NeoReplicator.prototype.set = function(options){
   this.options = options || {};
 };
 
-NeoRep.prototype.start = function(options) {
+NeoReplicator.prototype.start = function(options) {
   var self = this;
   self.set(options);
 
@@ -213,7 +213,7 @@ NeoRep.prototype.start = function(options) {
   }
 };
 
-NeoRep.prototype.stop = function(){
+NeoReplicator.prototype.stop = function(){
   var self = this;
   // Binary log connection does not end with destroy()
   self.connection.destroy();
@@ -228,7 +228,7 @@ NeoRep.prototype.stop = function(){
   });
 };
 
-NeoRep.prototype._skipEvent = function(eventName){
+NeoReplicator.prototype._skipEvent = function(eventName){
   var include = this.options.includeEvents;
   var exclude = this.options.excludeEvents;
   return !(
@@ -238,7 +238,7 @@ NeoRep.prototype._skipEvent = function(eventName){
     (exclude instanceof Array && exclude.indexOf(eventName) === -1)));
 };
 
-NeoRep.prototype._skipSchema = function(database, table){
+NeoReplicator.prototype._skipSchema = function(database, table){
   var include = this.options.includeSchema;
   var exclude = this.options.excludeSchema;
   return !(
@@ -255,4 +255,4 @@ NeoRep.prototype._skipSchema = function(database, table){
            exclude[database].indexOf(table) === -1))))));
 };
 
-module.exports = NeoRep;
+module.exports = NeoReplicator;
