@@ -10,12 +10,12 @@ It is briefly tested with MariaDB 10.0
 
 ```javascript
 var neorep = new NeoReplicator({
-  mysql: { port: '3306', host: 'localhost', user: 'root', password: 'root' },
+  mysql: { port: '3306', host: 'localhost', user: 'neorep', password: 'neorep' },
   neo4j: { port: '7474', host: 'localhost', user: 'neo4j', password: 'neo4j' },
   mapping: { /* see in example.js */ }
 });
 
-// Binlog must be started, optionally pass in filters
+// Replication must be started, as a parameter pass the name of the MySQL database to replicate
 neorep.start(
   includeSchema: { 'mysqlDatabaseName': true }
 });
