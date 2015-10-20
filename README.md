@@ -1,7 +1,16 @@
 # NeoReplicator
 A MySQL to Neo4J replicator based on binlog listener running on Node.js.
 
-NeoReplicator is a further development of 
+###TODO list
+create nodes from insert queries ✓
+create relations based on foreign keys ✓
+create relations based on Many-To-Many relations ✓
+update nodes after update queries ✓
+delete nodes
+delete relations
+improve stability
+error reporting
+reconnect after the connection is dropped by mysql server
 
 This package has been tested with MySQL server 5.5.40 and 5.6.19. All MySQL server versions >= 5.1.15 are supported.
 It is briefly tested with MariaDB 10.0
