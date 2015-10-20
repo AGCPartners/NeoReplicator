@@ -52,7 +52,7 @@ For a complete implementation see [`example.js`](example.js)...
 
 ## Reference
 
-This package is a further development of ['Zong Ji'](https://github.com/nevill/zongji) library
+This package is a further development of ['Zong Ji'](https://github.com/nevill/zongji) library.
 The main dependencies are:
 
 * https://github.com/felixge/node-mysql
