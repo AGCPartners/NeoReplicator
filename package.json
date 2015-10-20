@@ -1,0 +1,67 @@
+{
+  "name": "neorep",
+  "version": "0.3.2",
+  "description": "A mysql binlog listener running on Node.js",
+  "main": "index.js",
+  "engines": {
+    "node": "0.10"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "nodeunit --reporter=minimal test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nevill/neorep.git"
+  },
+  "keywords": [
+    "mysql",
+    "binlog"
+  ],
+  "author": {
+    "name": "Nevill",
+    "email": "nevill.dutt@gmail.com"
+  },
+  "contributors": [
+    {
+      "name": "numtel",
+      "email": "ben@latenightsketches.com",
+      "url": "https://github.com/numtel"
+    }
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nevill/neorep/issues"
+  },
+  "homepage": "https://github.com/nevill/neorep",
+  "devDependencies": {
+    "nodeunit": "~0.9.0"
+  },
+  "dependencies": {
+    "mysql": "~2.5.5",
+    "node-neo4j": "^2.0.3"
+  },
+  "gitHead": "ae5df5bb905eddc3196c813755169c137a3225bc",
+  "_id": "neorep@0.3.2",
+  "_shasum": "c4e6c8bdb32b9a13f440cfd341336575427b098a",
+  "_from": "neorep@*",
+  "_npmVersion": "1.4.28",
+  "_npmUser": {
+    "name": "nevill",
+    "email": "nevill.dutt@gmail.com"
+  },
+  "maintainers": [
+    {
+      "name": "nevill",
+      "email": "nevill.dutt@gmail.com"
+    }
+  ],
+  "dist": {
+    "shasum": "c4e6c8bdb32b9a13f440cfd341336575427b098a",
+    "tarball": "http://registry.npmjs.org/neorep/-/neorep-0.3.2.tgz"
+  },
+  "_resolved": "https://registry.npmjs.org/neorep/-/neorep-0.3.2.tgz",
+  "readme": "ERROR: No README data found!"
+}
