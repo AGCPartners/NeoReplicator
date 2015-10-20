@@ -10,8 +10,8 @@ It is briefly tested with MariaDB 10.0
 
 ```javascript
 var neorep = new NeoReplicator({
-  mysql: { port: 3306, host: localhost, user: root, password: root },
-  neo4j: { port: 7474, host: localhost, user: neo4j, password: neo4j },
+  mysql: { port: '3306', host: 'localhost', user: 'root', password: 'root' },
+  neo4j: { port: '7474', host: 'localhost', user: 'neo4j', password: 'neo4j' },
   mapping: { /* see in example.js */ }
 });
 
