@@ -23,11 +23,12 @@ function NeoReplicator(settings, options) {
   var neoSettings = settings.neo4j;
   this.neo4jDb = new neo4j.GraphDatabase('http://'+neoSettings.user+':'+neoSettings.password+'@'+neoSettings.host+':'+neoSettings.port);
   this._handleDisconnect();
-
+  this.cypherQueue = [];
   this.ctrlCallbacks = [];
   this.tableMap = {};
   this.ready = false;
   this.useChecksum = false;
+  this.cypherRunning = false;
 
   this._init();
 }
@@ -111,7 +112,10 @@ NeoReplicator.prototype._init = function() {
   };
 
   self.on('binlog', function(evt) {
-    evt.replicate(self.mapping);
+    evt.replicate(self.mapping, function(err) {
+      if(!self.cypherRunning) self.runCypherQuery();
+    });
+
   });
 
   var asyncMethods = [
@@ -158,6 +162,29 @@ NeoReplicator.prototype._init = function() {
     self.ready = true;
     self._executeCtrlCallbacks();
   };
+};
+
+NeoReplicator.prototype.runCypherQuery = function() {
+  var self = this;
+  if(self.cypherQueue.length) {
+    self.cypherRunning = true;
+    var query = self.cypherQueue.shift();
+    self.neo4jDb.cypher({ query: query }, function(err, res) {
+      if (err) {
+        console.log('===== Cypher Error ======');
+        console.log('Query: ' + query);
+        console.log('Error: ');
+        console.log(err);
+      } else {
+        console.log('===== Cypher Success =====');
+        console.log('Query: ' + query);
+        console.log('Result: ');
+        console.log(res);
+      }
+      self.cypherRunning = false;
+      self.runCypherQuery();
+    });
+  }
 };
 
 NeoReplicator.prototype._isChecksumEnabled = function(next) {
