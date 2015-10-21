@@ -28,6 +28,6 @@
   "homepage": "https://github.com/AGCPartners/NeoReplicator",
   "dependencies": {
     "mysql": "~2.5.5",
-    "node-neo4j": "^2.0.3"
+    "neo4j": "~2.0.0-RC2"
   }
 }
