@@ -1,6 +1,6 @@
 {
   "name": "neoreplicator",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Real time replication from MySQL to Neo4J using binary logs",
   "main": "index.js",
   "engines": {
