@@ -1,6 +1,12 @@
 # NeoReplicator
 A MySQL to Neo4J replicator based on binlog listener running on Node.js.
 
+### Update
+
+Thanks to a great feedback from guys from Neo Technology we have updated the cypher queries to use more of the potential Neo4J has.
+Due to some major changes in cypher queries structure of the mapping has been changed. Take a look at the [`example.js`](example.js) file.
+In the future the main focus will be on changing from single connection to a connection pool for connecting to the mysql master.
+
 ### Goals
 
 The package is still in development and some heavy change can occur.
