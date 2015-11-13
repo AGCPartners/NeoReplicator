@@ -21,7 +21,8 @@ function NeoReplicator(settings, options) {
   this.nextPosition = 0;
   this.listenerAdded = false;
   var neoSettings = settings.neo4j;
-  this.neo4jDb = new neo4j.GraphDatabase('http://'+neoSettings.user+':'+neoSettings.password+'@'+neoSettings.host+':'+neoSettings.port);
+  var protocol = neoSettings.secure ? 'https://' : 'http://';
+  this.neo4jDb = new neo4j.GraphDatabase(protocol+neoSettings.user+':'+neoSettings.password+'@'+neoSettings.host+':'+neoSettings.port);
   this._handleDisconnect();
   this.cypherQueue = [];
   this.ctrlCallbacks = [];

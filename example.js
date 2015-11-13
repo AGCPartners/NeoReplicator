@@ -4,32 +4,41 @@ var NeoReplicator = require('./');
 var mapping = {
   Users: {
     type: 'node',
-    name: 'User',
+    label: 'User',
     primaryKey: 'id',
     properties: ['firstName','lastName','email'],
     relations: {}
   },
   Companies: {
     type: 'node',
-    name: 'Company',
+    label: 'Company',
     primaryKey: 'id',
     properties: ['name','state','city'],
     relations: {
-      country: 'IS_IN'
+      country: {
+        label: 'IS_IN',
+        endNodeLabel: 'Country'
+      }
     }
   },
   Countries: {
     type: 'node',
-    name: 'Country',
+    label: 'Country',
     primaryKey: 'id',
     properties: ['name','shortName']
   },
   UserCompanies: {
     type: 'relation',
-    name: 'WORKS_FOR',
+    label: 'WORKS_FOR',
     primaryKey: 'id',
-    startNode: 'userId',
-    endNode: 'companyId',
+    startNode: {
+      label: 'User',
+      primaryKey: 'userId'
+    },
+    endNode: {
+      label: 'Company',
+      primaryKey: 'companyId'
+    },
     properties: ['department']
   }
 };
@@ -45,7 +54,8 @@ var neorep = new NeoReplicator({
     host: 'localhost',
     user: 'neo4j',
     password: 'A4qMLUUH',
-    port: '7474'
+    port: '7474',
+    secure: false
   },
   mapping: mapping
 });
